@@ -75,7 +75,7 @@ VALUES
     ('Quady', 150),
     ('Wstęp do spa', 80)
 
---Tabela Zamówienia, która przetrzymuje wszystkie zamówienia, zarówno na dodatki, jak i na wycieczki. Odnosi się do klucza głównego zarówno wycieczek, jak i dodatków. Zawiera ograniczenie check constraint, które sprawdza czy ilość dodatków jest większa niż ilość wycieczek, czyli ilość osób, które wykupiły wycieczkę. Jeśli tak, nie można dodać nowego rekordu. Id zamówienia może się powtarzać, bo na jednym zamówieniu można zakupić zarówno wycieczki, jak i dodatki.
+--Tabela Zamówienia, która przetrzymuje wszystkie zamówienia, zarówno na dodatki, jak i na wycieczki. Odnosi się do klucza głównego zarówno wycieczek, jak i dodatków. Id zamówienia może się powtarzać, bo na jednym zamówieniu można zakupić zarówno wycieczki, jak i dodatki.
 
 IF OBJECT_ID('Zamówienia ','U') IS NOT NULL
     DROP TABLE Zamówienia
@@ -83,7 +83,7 @@ GO
 
 CREATE TABLE Zamówienia
 (
-    NumerRezerwacji INT IDENTITY(1,1) PRIMARY KEY,
+    NumerRezerwacji INT NOT NULL PRIMARY KEY,
     -- tutaj byc moze zmienic
     ID_zamówienia INT NOT NULL,
     DataZamówienia DATE DEFAULT NULL,
@@ -94,25 +94,24 @@ CREATE TABLE Zamówienia
     CenaWycieczki INT NOT NULL,
     CenaDodatku INT NOT NULL,
     ID_klienta INT FOREIGN KEY REFERENCES Klienci(ID_klienta),
-    ID_pracownika INT FOREIGN KEY REFERENCES Pracownicy(ID_pracownika),
-    CONSTRAINT IlośćDodatków
-    CHECK (IlośćDodatków <= IlośćWycieczek)
+    ID_pracownika INT FOREIGN KEY REFERENCES Pracownicy(ID_pracownika)
+
 )
 
 INSERT INTO Zamówienia
-    (ID_zamówienia, DataZamówienia, NazwaWycieczki, IlośćWycieczek, NazwaDodatku, IlośćDodatków, CenaWycieczki, CenaDodatku, ID_klienta, ID_pracownika)
+    (NumerRezerwacji, ID_zamówienia, DataZamówienia, NazwaWycieczki, IlośćWycieczek, NazwaDodatku, IlośćDodatków, CenaWycieczki, CenaDodatku, ID_klienta, ID_pracownika)
 VALUES
-    (54321, '2023-01-13', 'Południowe Wybrzeże', 2, 'Obsługa fotograficzna', 2, 120, 50, 1, 12345),
-    (54321, '2023-01-13', null, 0, 'Fotelik dziecięcy', 1, 0, 10, 1, 12345),
-    (64321, '2023-01-15', 'Złoty Krąg', 3, 'Booster', 4, 0, 10, 2, 22345),
-    (74321, '2023-01-10', 'Złoty Krąg', 2 , 'Wstęp do spa', 2, 80, 80, 6, 32345),
-    (84321, '2022-12-15', 'Złoty Krąg', 3, 'Przejażdżka konno', 1, 80, 150, 7, 42345),
-    (94321, '2022-10-11', 'Polowanie na zorzę polarną', 1, 'Skutery śnieżne', 2, 90, 150, 3, 52345),
-    (94321, '2022-10-11', null, 0, 'Buty trekkingowe', 2, 0, 10, 3, 52345),
-    (104321, '2022-10-11', 'Półwysep Snaefellsens', 2, null, 0, 120, 0, 4, 12345),
-    (114321, '2022-11-12', 'Trekking po wulkanie', 5, null, 0, 90, 0, 5, 12345)
+    (1, 54321, '2023-01-13', 'Południowe Wybrzeże', 2, 'Obsługa fotograficzna', 2, 120, 50, 1, 12345),
+    (2, 54321, '2023-01-13', null, 0, 'Fotelik dziecięcy', 1, 0, 10, 1, 12345),
+    (3, 64321, '2023-01-15', 'Złoty Krąg', 3, 'Booster', 4, 0, 10, 2, 22345),
+    (4, 74321, '2023-01-10', 'Złoty Krąg', 2 , 'Wstęp do spa', 2, 80, 80, 6, 32345),
+    (5, 84321, '2022-12-15', 'Złoty Krąg', 3, 'Przejażdżka konno', 1, 80, 150, 7, 42345),
+    (6, 94321, '2022-10-11', 'Polowanie na zorzę polarną', 1, 'Skutery śnieżne', 2, 90, 150, 3, 52345),
+    (7, 94321, '2022-10-11', null, 0, 'Buty trekkingowe', 2, 0, 10, 3, 52345),
+    (8, 104321, '2022-10-11', 'Półwysep Snaefellsens', 2, null, 0, 120, 0, 4, 12345),
+    (9, 114321, '2022-11-12', 'Trekking po wulkanie', 5, null, 0, 90, 0, 5, 12345)
 
---Tabela Pracownicy przetrzymuje danych pracowników, którzy są odpowiedzialni za przyjęcie zamówienia.
+--Tabela Pracownicy przetrzymuje danych pracowników, którzy są odpowiedzialni za przyjęcie zamówienia. Zawiera ograniczenie check, które sprawdza, czy wprowad\zony email jest poprawny.
 
 IF OBJECT_ID('Pracownicy','U') IS NOT NULL
     DROP TABLE Pracownicy
@@ -125,7 +124,8 @@ CREATE TABLE Pracownicy
     DataZatrudnienia DATETIME NULL,
     Tel NVARCHAR(25) NULL,
     Email NVARCHAR(50) NULL,
-    Adres NVARCHAR(50) NULL
+    Adres NVARCHAR(50) NULL,
+    CONSTRAINT Email CHECK(Email LIKE '%___@___%')
 )
 
 INSERT INTO Pracownicy
@@ -147,7 +147,7 @@ GO
 CREATE TABLE Refundacje
 (
     ID_refundacji INT PRIMARY KEY,
-    ID_zamówienia INT REFERENCES Zamówienia (ID_zamówienia),
+    ID_zamówienia INT REFERENCES Zamówienia (NumerRezerwacji),
     DataRefundacji DATE NOT NULL,
     DataWycieczki DATE NOT NULL,
     KwotaRefundacji MONEY NOT NULL,
@@ -155,10 +155,10 @@ CREATE TABLE Refundacje
     CHECK (DataRefundacji < DataWycieczki)
 )
 
-INSERT INTO RefundacjeWycieczek
+INSERT INTO Refundacje
     (ID_refundacji, ID_zamówienia, DataRefundacji, DataWycieczki, KwotaRefundacji)
 VALUES
-    (12355, 94321, '2022-10-20', '2023-02-10', 400)
+    (12355, 1, '2022-10-20', '2023-02-10', 400)
 
 --Tabela Hotele zawiera dwie kolumny, nawe hotelu oraz adres hotelu. Służy do przechoywania danych o miejscu odbioru pasażera.
 
@@ -191,7 +191,7 @@ CREATE TABLE Pasażerowie
 (
     NazwaWycieczki NVARCHAR(50) NOT NULL,
     DataWycieczki DATE NOT NULL,
-    NumerRezerwacji INT NOT NULL REFERENCES Zamówienia(IdZamówienia),
+    NumerRezerwacji INT NOT NULL REFERENCES Zamówienia(NumerRezerwacji),
     ImieNazwisko NVARCHAR(50) NOT NULL,
     IlośćOsób INT NOT NULL,
     MiejsceOdbioru NVARCHAR(50) NULL REFERENCES Hotele(Nazwa),
@@ -202,13 +202,13 @@ GO
 INSERT INTO Pasażerowie
     (NazwaWycieczki, DataWycieczki, NumerRezerwacji, ImieNazwisko, IlośćOsób, MiejsceOdbioru, ID_klienta)
 VALUES
-    ('Południowe Wybrzeże', '2023-02-11', 54321, 'George Smith', 2, 'Hotel Skuggi', 1),
-    ('Złoty Krąg', '2023-02-11', 64321, 'John Doe', 3, 'Hilton Nordica', 2),
-    ('Złoty Krąg', '2023-02-11', 74321, 'Denzel Washington', 2, 'Centerhotel Plaza', 6),
-    ('Złoty Krąg', '2023-02-11', 84321, 'Ahmed Muhammad', 3, 'Marina Hotel', 7),
-    ('Polowanie na zorzę polarną', '2023-02-10', 94321, 'Jane Ian', 1, 'Marina Hotel', 3),
-    ('Półwysep Snaefellsens', '2023-02-10', 104321, 'Chris Mabel', 2, 'Marina Hotel', 4),
-    ('Trekking po wulkanie', '2023-02-10', 114321, 'Margret Sample', 5, 'Grand Hotel', 5)
+    ('Południowe Wybrzeże', '2023-02-11', 1, 'George Smith', 2, 'Hotel Skuggi', 1),
+    ('Złoty Krąg', '2023-02-11', 3, 'John Doe', 3, 'Hilton Nordica', 2),
+    ('Złoty Krąg', '2023-02-11', 4, 'Denzel Washington', 2, 'Centerhotel Plaza', 6),
+    ('Złoty Krąg', '2023-02-11', 5, 'Ahmed Muhammad', 3, 'Marina Hotel', 7),
+    ('Polowanie na zorzę polarną', '2023-02-10', 6, 'Jane Ian', 1, 'Marina Hotel', 3),
+    ('Półwysep Snaefellsens', '2023-02-10', 8, 'Chris Mabel', 2, 'Marina Hotel', 4),
+    ('Trekking po wulkanie', '2023-02-10', 9, 'Margret Sample', 5, 'Grand Hotel', 5)
 GO
 
 ------------------------------widoki Michała-------------------------
@@ -388,14 +388,13 @@ END
 ---------------WIDOK Mila------------------------------
 
 
---1. Widok, który pobiera dane z tabeli Zamówienia. Grupuje dane po polu ID_klienta. Dla każdej z grup sumuje ilość wydanych pieniędzy i tworzy nowe pole Suma Kwot. Następnie sortuje dane po polu Suma kwot wg malejącego porządku. Zwraca wynik Id klienta oraz Suma Kwot.
+--1. Widok, który pobiera dane z tabeli Zamówienia. Grupuje dane po polu ID_klienta. Dla każdej z grup sumuje ilość wydanych pieniędzy i tworzy nowe pole Suma Kwot. Zwraca wynik Id klienta oraz Suma Kwot.
 
 CREATE VIEW SumaKwotKlientów
 AS
     SELECT ID_klienta, SUM(IlośćWycieczek * CenaWycieczki + IlośćDodatków* CenaDodatku) as 'Suma Kwot'
     FROM Zamówienia
     GROUP BY ID_klienta
-    ORDER BY 'Suma Kwot' DESC;
 
 
 --2. Ta kwerenda tworzy widok, który połączył dane z tabel "Pracownicy" i "Zamówienia" po kluczu ID_pracownika, pozwalając na zobaczenie imienia i nazwiska pracownika oraz numeru zamówienia w jednym wyniku. Czyli widzimy, który pracownik był odpowiedzialny za przyjęcie zamówienia
@@ -418,7 +417,7 @@ AS
 RETURN (
 SELECT P.ImieNazwisko, P.Stanowisko, P.Tel, P.Email
 FROM Pracownicy AS P
-WHERE P.DataZatrudnienia BETWEEN @DataPoczatkowa AND DataKoncowa
+WHERE P.DataZatrudnienia BETWEEN @DataPoczatkowa AND @DataKoncowa
 )
 -- wywołanie funkcji
 SELECT *
@@ -459,8 +458,6 @@ BEGIN
     END
 END
 
--- wywolanie procedury
-EXEC usp_sprawdzKwoteRefundacj 110355, 94321, '2023-10-20', '2023-02-10', 400
 
 ----------WYZWALACZE-----------
 -- Ten wyzwalacz uniemożliwi dopisywanie rekordów do tabeli Hotele

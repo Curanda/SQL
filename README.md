@@ -9,4 +9,4 @@ which means I've only seen query results but not the original database.
 Knowing the subject matter and typically useful queries helped us devise the logic.
 
 >[!NOTE]
->Special mention to prof. H. Telega, who has opened up for us the door to the magic world of SQL. What a legend.
+>Special mention to prof. H. Telega, who opened up for us the door to the magic world of SQL. What a legend.

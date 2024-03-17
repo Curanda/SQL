@@ -7,4 +7,4 @@ This database is in fact a recreation of something, I've worked with briefly as 
 which means I've only seen query results but not the original database. 
 Knowing the subject matter and typically useful queries helped us devise the logic.
 
-==Special mention to prof. H. Telega, who has opened up for us the door to the magic world of SQL. What a legend.==
+== Special mention to prof. H. Telega, who has opened up for us the door to the magic world of SQL. What a legend. ==

@@ -1,5 +1,5 @@
 # Tour Operator Database
-### by M.Kuranda & M.Kozlowska @milon2000
+#### by M.Kuranda & M.Kozlowska @milon2000
 
 
 This is our semestral assignment in SQL on WSB-NLU and has gotten us **max 15/15 points**. It's meticulously commented to reflect the function of every query, procedure, trigger and a table.
